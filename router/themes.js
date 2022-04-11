@@ -10,10 +10,9 @@ router.post('/', auth(), themeController.createTheme);
 
 router.get('/:themeId', themeController.getTheme);
 router.post('/:themeId', auth(), postController.createPost);
-router.put('/:themeId', auth(), themeController.subscribe);
 router.put('/:themeId/posts/:postId', auth(), postController.editPost);
 router.delete('/:themeId/posts/:postId', auth(), postController.deletePost);
-
-// router.get('/my-trips/:id/reservations', auth(), themeController.getReservations);
+router.put('/:themeId', auth(), themeController.subscribe);
+router.delete('/:themeId', auth(), themeController.unsubscribe);
 
 module.exports = router
