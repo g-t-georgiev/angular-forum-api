@@ -26,6 +26,12 @@ const postSchema = new Schema({
     }
 );
 
+postSchema.virtual('likes', {
+    ref: 'Like',
+    localField: '_id',
+    foreignField: 'postId'
+});
+
 const Post = model('Post', postSchema);
 
 module.exports = Post;
