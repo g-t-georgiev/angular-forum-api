@@ -1,5 +1,4 @@
 const { themeModel } = require('../models');
-const { newPost } = require('./postController')
 
 /**
  * 
@@ -10,50 +9,16 @@ const { newPost } = require('./postController')
  */
 
 function getThemes(req, res, next) {
-    themeModel
-        // .find(
-        //     {}, 
-        //     { 
-        //         __v: 0
-        //     }
-        // )
-        .aggregate([
-            { $match: {} },
+    themeModel.find({})
+        .sort({ subscribers: -1 })
+        .populate([
             {
-                $lookup: {
-                    from: 'users',
-                    localField: 'userId',
-                    foreignField: '_id',
-                    pipeline: [
-                        { $project: { username: 1 } }
-                    ],
-                    as: 'userId'
-                }
-            },
-            { $unwind: '$userId' },
-            { 
-                $project: {
-                    themeName: 1,
-                    createdAt: 1,
-                    updatedAt: 1,
-                    subscribers: 1,
-                    userId: '$userId',
-                    posts: 1,
-                    subscriptions: {
-                        $size: '$subscribers'
-                    }
+                path: 'authorId',
+                select: {
+                    username: 1
                 }
             }
         ])
-        .sort({ subscriptions: -1 })
-        // .populate([
-        //     {
-        //         path: 'userId',
-        //         select: {
-        //             username: 1
-        //         }
-        //     }
-        // ])
         .then(themes => res.json(themes))
         .catch(next);
 }
@@ -69,25 +34,24 @@ function getThemes(req, res, next) {
 function getTheme(req, res, next) {
     const { themeId } = req.params;
 
-    themeModel
-        .findById(
-            themeId, 
-            { 
-                __v: 0, 
-            }
-        )
-        .populate({
-            path: 'posts',
-            select: {
-                __v: 0
+    themeModel.findById(themeId)
+        .populate([
+            {
+                path: 'posts',
+                select: {
+                    __v: 0
+                },
+                populate: {
+                path: 'authorId',
+                select: {
+                    username: 1,
+                }
+                }
             },
-            populate: {
-              path: 'userId',
-              select: {
-                username: 1,
-              }
+            {
+                path: 'subscribers'
             }
-          })
+        ])
         .then(theme => res.json(theme))
         .catch(next);
 }
@@ -100,14 +64,37 @@ function getTheme(req, res, next) {
  * @returns {void}
  */
 
-function createTheme(req, res, next) {
-    const { themeName, postText } = req.body;
+ function createTheme(req, res, next) {
+    const { title } = req.body;
     const { _id: userId } = req.user;
 
-    themeModel.create({ themeName, userId, subscribers: [userId] })
-        .then(theme => {
-            newPost(postText, userId, theme._id)
-                .then(([_, updatedTheme]) => res.status(200).json(updatedTheme))
+    themeModel.create({ title, authorId: userId })
+        .then(theme => { res.status(201).json(theme) })
+        .catch(next);
+}
+
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
+function editTheme(req, res, next) {
+    const { title } = req.body;
+    const { themeId } = req.params;
+    const { _id: userId } = req.user;
+
+    // if the userId is not the same as this one of the post, the post will not be deleted
+    postModel.findOneAndDelete({ _id: postId, authorId: userId })
+    themeModel.findByIdAndUpdate(themeId, { title }, { new: true })
+        .then(updatedTheme => {
+            if (updatedTheme) {
+                res.status(201).json({ message: 'Updated theme successfully!', data: x });
+            } else {
+                res.status(401).json({ message: 'Not allowed!' });
+            }
         })
         .catch(next);
 }
@@ -120,36 +107,20 @@ function createTheme(req, res, next) {
  * @returns {void}
  */
 
-function subscribe(req, res, next) {
+ function deleteTheme(req, res, next) {
+    const { title } = req.body;
     const { themeId } = req.params;
     const { _id: userId } = req.user;
 
-    // console.log('subscribed to theme ' + themeId);
-
-    themeModel.findByIdAndUpdate({ _id: themeId }, { $addToSet: { subscribers: userId } }, { new: true })
-        .then(updatedTheme => {
-            res.status(200).json(updatedTheme);
-        })
-        .catch(next);
-}
-
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
-
-function unsubscribe(req, res, next) {
-    const { themeId } = req.params;
-    const { _id: userId } = req.user;
-
-    // console.log('unsubscribed to theme ' + themeId);
-
-    themeModel.findByIdAndUpdate({ _id: themeId }, { $pull: { subscribers: userId } }, { new: true })
-        .then(updatedTheme => {
-            res.status(200).json(updatedTheme);
+    // if the userId is not the same as this one of the post, the post will not be deleted
+    postModel.findOneAndDelete({ _id: postId, authorId: userId })
+    themeModel.findByIdAndDelete(themeId, { title }, { new: true })
+        .then(deletedTheme => {
+            if (deletedTheme) {
+                res.status(201).json({ message: 'Deleted theme successfully!', data: x });
+            } else {
+                res.status(401).json({ message: 'Not allowed!' });
+            }
         })
         .catch(next);
 }
@@ -158,6 +129,6 @@ module.exports = {
     getThemes,
     createTheme,
     getTheme,
-    subscribe,
-    unsubscribe
+    editTheme,
+    deleteTheme
 }
