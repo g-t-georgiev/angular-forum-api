@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+const { Schema, model } = mongoose;
 const bcrypt = require('bcrypt');
 const saltRounds = Number(process.env.SALTROUNDS) || 5;
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     email: {
         type: String,
         required: true,
@@ -74,4 +75,6 @@ userSchema.pre('save', async function (next) {
     }
 });
 
-module.exports = mongoose.model('User', userSchema);
+const User = model('User', userSchema);
+
+module.exports = User;
