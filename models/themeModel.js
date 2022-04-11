@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
-const { ObjectId } = mongoose.Schema.Types;
+const { ObjectId } = Schema.Types;
 
 const themeSchema = new Schema({
     title: {
