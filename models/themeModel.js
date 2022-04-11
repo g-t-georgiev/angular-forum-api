@@ -1,37 +1,27 @@
 const mongoose = require('mongoose');
+const { Schema, model } = mongoose;
 const { ObjectId } = mongoose.Schema.Types;
 
-const themeSchema = new mongoose.Schema({
-    themeName: {
+const themeSchema = new Schema({
+    title: {
         type: String,
         required: true
     },
-    subscribers: [{
+    authorId: {
         type: ObjectId,
         ref: "User"
-    }],
-    userId: {
-        type: ObjectId,
-        ref: "User"
-    },
-    posts: [{
-        type: ObjectId,
-        ref: "Post"
-    }],
+    }
 }, { 
-    timestamps: true, 
-    toJSON: {
-        virtuals: true
-    }, 
-    toObject: {
-        virtuals: true
-    } });
+        timestamps: true, 
+        toJSON: {
+            virtuals: true
+        }, 
+        toObject: {
+            virtuals: true
+        } 
+    }
+);
 
-themeSchema.virtual('subscriptions')
-    .get(
-        function () {
-            return this.subscribers?.length;
-        }
-    );
+const Theme = model('Theme', themeSchema);
 
-module.exports = mongoose.model('Theme', themeSchema);
+module.exports = Theme;
