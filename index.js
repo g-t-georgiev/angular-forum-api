@@ -1,11 +1,6 @@
 global.__basedir = __dirname;
 require('dotenv').config()
 const dbConnector = require('./config/db');
-// const mongoose = require('mongoose');
-const apiRouter = require('./router');
-const cors = require('cors');
-// const config = require('./config/config');
-const { errorHandler } = require('./utils');
 
 dbConnector()
   .then(() => {
