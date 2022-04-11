@@ -2,7 +2,9 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const cookieSecret = process.env.COOKIESECRET || 'SoftUni';
-// const { errorHandler } = require('../utils')
+const { errorHandler } = require('../utils');
+const config = require('./config');
+const apiRouter = require('../router');
 
 module.exports = (app) => {
     app.use(express.json());
@@ -11,5 +13,12 @@ module.exports = (app) => {
 
     app.use(express.static(path.resolve(__basedir, 'static')));
 
-    // app.use(errorHandler(err, req, res, next));
+    app.use(cors({
+        origin: config.origin,
+        credentials: true
+    }));
+  
+    app.use('/api', apiRouter);
+  
+    app.use(errorHandler);
 };
