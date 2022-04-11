@@ -22,6 +22,18 @@ const themeSchema = new Schema({
     }
 );
 
+themeSchema.virtual('posts', {
+    ref: 'Post',
+    localField: '_id',
+    foreignField: 'themeId'
+});
+
+themeSchema.virtual('subscribers', {
+    ref: 'User',
+    localField: '_id',
+    foreignField: 'themeId'
+});
+
 const Theme = model('Theme', themeSchema);
 
 module.exports = Theme;
