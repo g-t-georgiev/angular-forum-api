@@ -29,7 +29,7 @@ themeSchema.virtual('posts', {
 });
 
 themeSchema.virtual('subscribers', {
-    ref: 'User',
+    ref: 'Subscription',
     localField: '_id',
     foreignField: 'themeId'
 });
