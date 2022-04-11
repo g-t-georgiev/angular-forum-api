@@ -1,5 +1,13 @@
 const { userModel, themeModel, postModel } = require('../models');
 
+/**
+ * 
+ * @param {String} text 
+ * @param {String} userId 
+ * @param {String} themeId 
+ * @returns {void}
+ */
+
 function newPost(text, userId, themeId) {
     return postModel.create({ text, userId, themeId })
         .then(post => {
@@ -27,6 +35,14 @@ function newPost(text, userId, themeId) {
             ])
         })
 }
+
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
 
 function getLatestsPosts(req, res, next) {
     const limit = Number(req.query.limit) || 0;
@@ -61,6 +77,14 @@ function getLatestsPosts(req, res, next) {
         .catch(next);
 }
 
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
 function createPost(req, res, next) {
     const { themeId } = req.params;
     const { _id: userId } = req.user;
@@ -70,6 +94,14 @@ function createPost(req, res, next) {
         .then(([_, updatedTheme]) => res.status(200).json(updatedTheme))
         .catch(next);
 }
+
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
 
 function editPost(req, res, next) {
     const { postId } = req.params;
@@ -88,6 +120,14 @@ function editPost(req, res, next) {
         })
         .catch(next);
 }
+
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
 
 function deletePost(req, res, next) {
     const { postId, themeId } = req.params;
@@ -108,15 +148,42 @@ function deletePost(req, res, next) {
         .catch(next);
 }
 
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
 function like(req, res, next) {
     const { postId } = req.params;
     const { _id: userId } = req.user;
 
-    console.log('like')
+    // console.log('like');
 
     postModel.updateOne({ _id: postId }, { $addToSet: { likes: userId } }, { new: true })
         .then(() => res.status(200).json({ message: 'Liked successful!' }))
-        .catch(next)
+        .catch(next);
+}
+
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
+function unlike(req, res, next) {
+    const { postId } = req.params;
+    const { _id: userId } = req.user;
+
+    // console.log('unlike');
+
+    postModel.updateOne({ _id: postId }, { $pull: { likes: userId } }, { new: true })
+        .then(() => res.status(200).json({ message: 'Unliked successfull!' }))
+        .catch(next);
 }
 
 module.exports = {
@@ -126,4 +193,5 @@ module.exports = {
     editPost,
     deletePost,
     like,
+    unlike
 }
