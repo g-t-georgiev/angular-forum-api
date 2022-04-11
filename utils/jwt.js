@@ -1,10 +1,31 @@
 const jwt = require('jsonwebtoken');
 const secret = process.env.SECRET || 'SoftSecret';
 
-function createToken(data) {
-    return jwt.sign(data, secret, { expiresIn: '1d' });
+/**
+ * 
+ * @param {{ [key: String]: any }} data 
+ * @param {{ [key: String]: String | Number }} options
+ * @returns {Promise<string>}
+ */
+function createToken(data, options = { expiresIn: '1d' }) {
+    return new Promise((resolve, reject) => {
+        jwt.sign(data, secret, options, (err, token) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            resolve(token);
+        });
+    });
 }
 
+
+/**
+ * 
+ * @param {String} token 
+ * @returns {Promise<any>}
+ */
 function verifyToken(token) {
     return new Promise((resolve, reject) => {
         jwt.verify(token, secret, (err, data) => {
@@ -12,6 +33,7 @@ function verifyToken(token) {
                 reject(err);
                 return;
             }
+
             resolve(data);
         });
     });
