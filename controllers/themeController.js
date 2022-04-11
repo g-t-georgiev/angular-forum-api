@@ -1,6 +1,14 @@
 const { themeModel } = require('../models');
 const { newPost } = require('./postController')
 
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
 function getThemes(req, res, next) {
     themeModel
         // .find(
@@ -50,6 +58,14 @@ function getThemes(req, res, next) {
         .catch(next);
 }
 
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
 function getTheme(req, res, next) {
     const { themeId } = req.params;
 
@@ -76,6 +92,14 @@ function getTheme(req, res, next) {
         .catch(next);
 }
 
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
 function createTheme(req, res, next) {
     const { themeName, postText } = req.body;
     const { _id: userId } = req.user;
@@ -88,12 +112,44 @@ function createTheme(req, res, next) {
         .catch(next);
 }
 
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
 function subscribe(req, res, next) {
-    const themeId = req.params.themeId;
+    const { themeId } = req.params;
     const { _id: userId } = req.user;
+
+    // console.log('subscribed to theme ' + themeId);
+
     themeModel.findByIdAndUpdate({ _id: themeId }, { $addToSet: { subscribers: userId } }, { new: true })
         .then(updatedTheme => {
-            res.status(200).json(updatedTheme)
+            res.status(200).json(updatedTheme);
+        })
+        .catch(next);
+}
+
+/**
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Callback} next 
+ * @returns {void}
+ */
+
+function unsubscribe(req, res, next) {
+    const { themeId } = req.params;
+    const { _id: userId } = req.user;
+
+    // console.log('unsubscribed to theme ' + themeId);
+
+    themeModel.findByIdAndUpdate({ _id: themeId }, { $pull: { subscribers: userId } }, { new: true })
+        .then(updatedTheme => {
+            res.status(200).json(updatedTheme);
         })
         .catch(next);
 }
@@ -103,4 +159,5 @@ module.exports = {
     createTheme,
     getTheme,
     subscribe,
+    unsubscribe
 }
