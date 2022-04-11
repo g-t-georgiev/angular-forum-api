@@ -15,7 +15,16 @@ const postSchema = new Schema({
         type: ObjectId,
         ref: "Theme"
     },
-}, { timestamps: true });
+},  {
+        timestamps: true,
+        toJSON: {
+            virtuals: true
+        },
+        toObject: {
+            virtuals: true
+        }
+    }
+);
 
 const Post = model('Post', postSchema);
 

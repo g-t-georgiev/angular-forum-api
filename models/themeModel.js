@@ -11,7 +11,7 @@ const themeSchema = new Schema({
         type: ObjectId,
         ref: "User"
     }
-}, { 
+},  { 
         timestamps: true, 
         toJSON: {
             virtuals: true
