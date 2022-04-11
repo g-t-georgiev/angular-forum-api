@@ -2,23 +2,35 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const saltRounds = Number(process.env.SALTROUNDS) || 5;
 
-const { ObjectId } = mongoose.Schema.Types;
-
 const userSchema = new mongoose.Schema({
-    tel: {
-        type: String,
-    },
     email: {
         type: String,
         required: true,
         unique: true,
+        validate: {
+            /**
+             * 
+             * @param {String} v 
+             * @returns {Boolean}
+             */
+            validator: function (v) {
+                console.log(this);
+                return true;
+                // return !this.find({ email: v });
+            }
+        }
     },
     username: {
         type: String,
-        required: true,
+        required: [true, 'Username is required.'],
         unique: true,
         minlength: [5, 'Username should be at least 5 characters'],
         validate: {
+            /**
+             * 
+             * @param {String} v 
+             * @returns {Boolean}
+             */
             validator: function (v) {
                 return /[a-zA-Z0-9]+/g.test(v);
             },
@@ -30,20 +42,17 @@ const userSchema = new mongoose.Schema({
         required: true,
         minlength: [5, 'Password should be at least 5 characters'],
         validate: {
+            /**
+             * 
+             * @param {String} v 
+             * @returns {Boolean}
+             */
             validator: function (v) {
                 return /[a-zA-Z0-9]+/g.test(v);
             },
             message: props => `${props.value} must contains only latin letters and digits!`
         },
-    },
-    themes: [{
-        type: ObjectId,
-        ref: "Theme"
-    }],
-    posts: [{
-        type: ObjectId,
-        ref: "Post"
-    }]
+    }
 }, { timestamps: true });
 
 userSchema.methods = {
@@ -52,23 +61,17 @@ userSchema.methods = {
     }
 }
 
-userSchema.pre('save', function (next) {
-    if (this.isModified('password')) {
-        bcrypt.genSalt(saltRounds, (err, salt) => {
-            if (err) {
-                next(err);
-            }
-            bcrypt.hash(this.password, salt, (err, hash) => {
-                if (err) {
-                    next(err);
-                }
-                this.password = hash;
-                next();
-            })
-        })
-        return;
+userSchema.pre('save', async function (next) {
+    try {
+        if (this.isModified('password')) {
+            const salt = await bcrypt.genSalt(saltRounds);
+            await bcrypt.hash(this.password, salt);
+            next();
+        }
+        next();
+    } catch (err) {
+        next(err);
     }
-    next();
 });
 
 module.exports = mongoose.model('User', userSchema);
