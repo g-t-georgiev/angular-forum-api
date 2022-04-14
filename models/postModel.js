@@ -29,7 +29,8 @@ const postSchema = new Schema({
 postSchema.virtual('likes', {
     ref: 'Like',
     localField: '_id',
-    foreignField: 'postId'
+    foreignField: 'postId',
+    count: true
 });
 
 const Post = model('Post', postSchema);
