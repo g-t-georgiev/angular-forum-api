@@ -33,6 +33,20 @@ postSchema.virtual('likes', {
     count: true
 });
 
+// Populate likes after post update query
+postSchema.post('save', function (doc, next) {
+    doc
+        .populate({
+            path: 'likes'
+        })
+        .then(
+            function () {
+                next();
+            }
+        )
+
+});
+
 const Post = model('Post', postSchema);
 
 module.exports = Post;
