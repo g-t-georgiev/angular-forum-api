@@ -10,7 +10,6 @@ const { themeModel } = require('../models');
 
 function getThemes(req, res, next) {
     themeModel.find({})
-        .sort({ subscribers: -1 })
         .populate([
             {
                 path: 'authorId',
@@ -69,7 +68,13 @@ function getTheme(req, res, next) {
     const { _id: userId } = req.user;
 
     themeModel.create({ title, authorId: userId })
-        .then(theme => { res.status(201).json(theme) })
+        .then(createdTheme => {
+            if (createdTheme) {
+                res.status(201).json({ message: 'Created theme successfully!', data: createdTheme });
+            } else {
+                res.status(401).json({ message: 'Not allowed!' });
+            }
+        })
         .catch(next);
 }
 
@@ -91,7 +96,7 @@ function editTheme(req, res, next) {
     themeModel.findByIdAndUpdate(themeId, { title }, { new: true })
         .then(updatedTheme => {
             if (updatedTheme) {
-                res.status(201).json({ message: 'Updated theme successfully!', data: x });
+                res.status(201).json({ message: 'Updated theme successfully!', data: updatedTheme });
             } else {
                 res.status(401).json({ message: 'Not allowed!' });
             }
@@ -117,7 +122,7 @@ function editTheme(req, res, next) {
     themeModel.findByIdAndDelete(themeId, { title }, { new: true })
         .then(deletedTheme => {
             if (deletedTheme) {
-                res.status(201).json({ message: 'Deleted theme successfully!', data: x });
+                res.status(201).json({ message: 'Deleted theme successfully!', data: deletedTheme });
             } else {
                 res.status(401).json({ message: 'Not allowed!' });
             }
