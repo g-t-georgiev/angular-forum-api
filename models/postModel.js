@@ -33,7 +33,7 @@ postSchema.virtual('likes', {
     count: true
 });
 
-// Populate likes after post update query
+// Populate 'likes' after post update query
 postSchema.post('save', function (doc, next) {
     doc
         .populate({
