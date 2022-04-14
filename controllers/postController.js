@@ -41,7 +41,13 @@ function createPost(req, res, next) {
     const { text, themeId } = req.body;
 
     postModel.create({ text, authorId: userId, themeId })
-        .then(x => { res.status(201).json(x) })
+        .then(createdPost => {
+            if (createdPost) {
+                res.status(201).json({ message: 'Post created successfully!', data: createdPost });
+            } else {
+                res.status(401).json({ message: 'Not allowed!' });
+            }
+        })
         .catch(next);
 }
 
@@ -62,7 +68,7 @@ function editPost(req, res, next) {
     postModel.findOneAndUpdate({ _id: postId, authorId: userId }, { text }, { new: true })
         .then(updatedPost => {
             if (updatedPost) {
-                res.status(201).json(updatedPost);
+                res.status(201).json({ message: 'Post updated successfully!', data: updatedPost });
             }
             else {
                 res.status(401).json({ message: `Not allowed!` });
@@ -87,7 +93,7 @@ function deletePost(req, res, next) {
     postModel.findOneAndDelete({ _id: postId, authorId: userId })
         .then(deletedPost => {
             if (deletedPost) {
-                res.status(200).json(deletedPost)
+                res.status(200).json({ message: 'Post deleted successfully!', data: deletedPost });
             } else {
                 res.status(401).json({ message: `Not allowed!` });
             }
