@@ -31,7 +31,8 @@ themeSchema.virtual('posts', {
 themeSchema.virtual('subscribers', {
     ref: 'Subscription',
     localField: '_id',
-    foreignField: 'themeId'
+    foreignField: 'themeId',
+    count: true
 });
 
 const Theme = model('Theme', themeSchema);
