@@ -35,6 +35,25 @@ themeSchema.virtual('subscribers', {
     count: true
 });
 
+// Populate 'posts' after theme update query
+themeSchema.post('save', function (doc, next) {
+    doc
+        .populate({
+            path: 'posts',
+            populate: {
+                path: 'authorId',
+                select: {
+                    username: 1,
+                }
+            }
+        })
+        .then(
+            function () {
+                next();
+            }
+        )
+});
+
 const Theme = model('Theme', themeSchema);
 
 module.exports = Theme;
