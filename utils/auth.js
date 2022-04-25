@@ -36,7 +36,7 @@ function auth(redirectUnauthenticated = true) {
                         'blacklisted token', 
                         'jwt must be provided'
                     ].includes(err.message)) {
-                    console.error(err);
+                    // console.error(err);
 
                     res
                         .status(401)
