@@ -20,10 +20,11 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Username is required.'],
         unique: true,
-        minlength: [5, 'Username should be at least 5 characters'],
+        minlength: [5, 'Username should be at least 4 characters'],
+        maxlength: [30, 'Username should not be more than 30 characters long.'],
         validate: {
             validator: function (v) {
-                return /[a-zA-Z0-9]+/g.test(v);
+                return /(?=[A-Za-z]+)^[A-Za-z0-9]+$/g.test(v);
             },
             message: props => `${props.value} must contains only latin letters and digits!`
         },
@@ -41,7 +42,7 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true,
-        minlength: [5, 'Password should be at least 5 characters'],
+        minlength: [5, 'Password should be at least 6 characters'],
         validate: {
             validator: function (v) {
                 return /[a-zA-Z0-9]+/g.test(v);
