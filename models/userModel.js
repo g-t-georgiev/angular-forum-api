@@ -34,6 +34,7 @@ const userSchema = new Schema({
         required: [true, 'Image URL is required.'],
         validate: {
             validator: function (v) {
+                console.log(v);
                 return /(?=^https?:\/\/).+/.test(value);
             },
             message: props => `${props.value} is not a valid URL address.`
