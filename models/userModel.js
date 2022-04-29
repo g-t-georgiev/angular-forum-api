@@ -38,6 +38,16 @@ const userSchema = new Schema({
             message: props => `${props.value} must contains only latin letters and digits!`
         },
     },
+    imageUrl: {
+        type: String,
+        required: [true, 'Image URL is required.'],
+        validate: {
+            validator: function (v) {
+                return /(?=^https?:\/\/).+/.test(value);
+            },
+            message: props => `${props.value} is not a valid URL address.`
+        }
+    },
     password: {
         type: String,
         required: true,
