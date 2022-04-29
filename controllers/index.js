@@ -1,9 +1,9 @@
 const authController = require('./auth');
-const themeController = require('./themeController');
-const postController = require('./postController');
-const userController = require('./userController');
-const likeController = require('./likeController');
-const subscriptionController = require('./subscriptionController');
+const themeController = require('./theme');
+const postController = require('./post');
+const userController = require('./user');
+const likeController = require('./like');
+const subscriptionController = require('./subscription');
 
 module.exports = {
     authController,
