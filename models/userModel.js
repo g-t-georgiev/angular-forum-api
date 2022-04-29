@@ -9,11 +9,6 @@ const userSchema = new Schema({
         required: true,
         unique: true,
         validate: {
-            /**
-             * 
-             * @param {String} v 
-             * @returns {Boolean}
-             */
             validator: function (v) {
                 console.log(this);
                 return true;
@@ -27,11 +22,6 @@ const userSchema = new Schema({
         unique: true,
         minlength: [5, 'Username should be at least 5 characters'],
         validate: {
-            /**
-             * 
-             * @param {String} v 
-             * @returns {Boolean}
-             */
             validator: function (v) {
                 return /[a-zA-Z0-9]+/g.test(v);
             },
@@ -53,11 +43,6 @@ const userSchema = new Schema({
         required: true,
         minlength: [5, 'Password should be at least 5 characters'],
         validate: {
-            /**
-             * 
-             * @param {String} v 
-             * @returns {Boolean}
-             */
             validator: function (v) {
                 return /[a-zA-Z0-9]+/g.test(v);
             },
