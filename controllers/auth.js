@@ -12,13 +12,7 @@ const removePassword = (data) => {
     return userData
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
+
 function register(req, res, next) {
     const { email, username, password, repeatPassword } = req.body;
 
@@ -33,14 +27,15 @@ function register(req, res, next) {
             createdUser = bsonToJson(createdUser);
             createdUser = removePassword(createdUser);
 
-            const token = utils.jwt.createToken({ id: createdUser._id });
-            if (process.env.NODE_ENV === 'production') {
-                res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
-            } else {
-                res.cookie(authCookieName, token, { httpOnly: true })
-            }
-            res.status(200)
-                .send(createdUser);
+            // const token = utils.jwt.createToken({ id: createdUser._id });
+            // if (process.env.NODE_ENV === 'production') {
+            //     res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
+            // } else {
+            //     res.cookie(authCookieName, token, { httpOnly: true })
+            // }
+
+            res.status(201)
+                .send({ message: 'Account registered successfully!' });
         })
         .catch(err => {
             if (err.name === 'MongoError' && err.code === 11000) {
@@ -56,13 +51,7 @@ function register(req, res, next) {
         });
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
+
 function login(req, res, next) {
     const { email, password } = req.body;
 
@@ -92,13 +81,7 @@ function login(req, res, next) {
         .catch(next);
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
+
 function logout(req, res) {
     const token = req.cookies[authCookieName];
 
@@ -106,7 +89,7 @@ function logout(req, res) {
         .then(() => {
             res.clearCookie(authCookieName)
                 .status(204)
-                .send({ message: 'Logged out!' });
+                .send({ message: 'Logout successful!' });
         })
         .catch(err => res.send(err));
 }
