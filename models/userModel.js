@@ -7,14 +7,7 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: true,
-        validate: {
-            validator: function (v) {
-                console.log(this);
-                return true;
-                // return !this.find({ email: v });
-            }
-        }
+        unique: true
     },
     username: {
         type: String,
@@ -34,8 +27,7 @@ const userSchema = new Schema({
         required: [true, 'Image URL is required.'],
         validate: {
             validator: function (v) {
-                console.log(v);
-                return /(?=^https?:\/\/).+/.test(value);
+                return /(?=^https?:\/\/).+/.test(v);
             },
             message: props => `${props.value} is not a valid URL address.`
         }
@@ -61,11 +53,14 @@ userSchema.methods = {
 
 userSchema.pre('save', async function (next) {
     try {
-        if (this.isModified('password')) {
-            const salt = await bcrypt.genSalt(saltRounds);
-            await bcrypt.hash(this.password, salt);
+        if (!this.isModified('password')) {
             next();
+            return;
         }
+
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hashed = await bcrypt.hash(this.password, salt);
+        this.password = hashed;
         next();
     } catch (err) {
         next(err);
