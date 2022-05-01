@@ -27,13 +27,6 @@ function register(req, res, next) {
             createdUser = bsonToJson(createdUser);
             createdUser = removePassword(createdUser);
 
-            // const token = utils.jwt.createToken({ id: createdUser._id });
-            // if (process.env.NODE_ENV === 'production') {
-            //     res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
-            // } else {
-            //     res.cookie(authCookieName, token, { httpOnly: true })
-            // }
-
             res.status(201)
                 .send({ message: 'Account registered successfully!' });
         })
@@ -76,8 +69,6 @@ function login(req, res, next) {
             ]);
         })
         .then(([user, token]) => {
-            
-            console.log('Login action generated token: ', token);
 
             if (process.env.NODE_ENV === 'production') {
                 res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
