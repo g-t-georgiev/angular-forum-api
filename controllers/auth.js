@@ -60,38 +60,48 @@ function login(req, res, next) {
             return Promise.all([user, user ? user.matchPassword(password) : false]);
         })
         .then(([user, match]) => {
+
             if (!match) {
                 res.status(401)
                     .send({ message: 'Wrong email or password' });
                 return
             }
+
             user = bsonToJson(user);
             user = removePassword(user);
 
-            const token = utils.jwt.createToken({ id: user._id });
+            return Promise.all([
+                user,
+                utils.jwt.createToken({ id: user._id })
+            ]);
+        })
+        .then(([user, token]) => {
+            
+            console.log('Login action generated token: ', token);
 
             if (process.env.NODE_ENV === 'production') {
                 res.cookie(authCookieName, token, { httpOnly: true, sameSite: 'none', secure: true })
             } else {
                 res.cookie(authCookieName, token, { httpOnly: true })
             }
+
             res.status(200)
-                .send(user);
+                .send({ user, message: utils.greet(user.username) });
         })
         .catch(next);
 }
 
 
-function logout(req, res) {
+function logout(req, res, next) {
     const token = req.cookies[authCookieName];
 
     tokenBlacklistModel.create({ token })
         .then(() => {
             res.clearCookie(authCookieName)
-                .status(204)
+                .status(200)
                 .send({ message: 'Logout successful!' });
         })
-        .catch(err => res.send(err));
+        .catch(next);
 }
 
 module.exports = {
