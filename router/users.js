@@ -3,6 +3,8 @@ const router = express.Router();
 const { userController } = require('../controllers');
 const { auth } = require('../utils');
 
+router.get('/auth', auth(false), userController.authenticate);
+
 router.get('/profile', auth(), userController.getProfileInfo);
 router.put('/profile', auth(), userController.editProfileInfo);
 
