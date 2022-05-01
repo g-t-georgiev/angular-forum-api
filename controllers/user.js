@@ -6,13 +6,13 @@ const {
     likeModel
 } = require('../models');
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
+const utils = require('../utils');
+
+function authenticate(req, res) {
+    const { user } = req;
+    res.status(200).send({ user, message: utils.greet(user && user.username) });
+}
+
 function getProfileInfo(req, res, next) {
     const { _id: userId } = req.user;
 
@@ -21,13 +21,6 @@ function getProfileInfo(req, res, next) {
         .catch(next);
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
 function editProfileInfo(req, res, next) {
     const { _id: userId } = req.user;
     const { username, email } = req.body;
@@ -48,13 +41,6 @@ function editProfileInfo(req, res, next) {
         });
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
 function getUserThemes(req, res, next) {
     const { _id: userId } = req.user;
 
@@ -63,13 +49,6 @@ function getUserThemes(req, res, next) {
         .catch(next);
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
 function getUserSubscriptions(req, res, next) {
     const { _id: userId } = req.user;
 
@@ -78,13 +57,6 @@ function getUserSubscriptions(req, res, next) {
         .catch(next);
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
 function getUserPosts(req, res, next) {
     const { _id: userId } = req.user;
 
@@ -93,13 +65,6 @@ function getUserPosts(req, res, next) {
         .catch(next);
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
 function getUserLikes(req, res, next) {
     const { _id: userId } = req.user;
 
@@ -109,6 +74,7 @@ function getUserLikes(req, res, next) {
 }
 
 module.exports = {
+    authenticate,
     getProfileInfo,
     editProfileInfo,
     getUserThemes,
