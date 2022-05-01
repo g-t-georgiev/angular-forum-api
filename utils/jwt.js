@@ -7,9 +7,9 @@ const secret = process.env.SECRET || 'SoftSecret';
  * @param {{ [key: String]: String | Number }} options
  * @returns {Promise<string>}
  */
-function createToken(data, options = { expiresIn: '1d' }) {
+function createToken(payload, options = { expiresIn: '1d' }) {
     return new Promise((resolve, reject) => {
-        jwt.sign(data, secret, options, (err, token) => {
+        jwt.sign(payload, secret, options, (err, token) => {
             if (err) {
                 reject(err);
                 return;
