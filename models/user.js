@@ -13,7 +13,7 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Username is required.'],
         unique: true,
-        minlength: [5, 'Username should be at least 4 characters'],
+        minlength: [4, 'Username should be at least 4 characters'],
         maxlength: [30, 'Username should not be more than 30 characters long.'],
         validate: {
             validator: function (v) {
