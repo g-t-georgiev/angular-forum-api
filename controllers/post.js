@@ -1,13 +1,5 @@
 const { postModel } = require('../models');
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
-
 function getLatestsPosts(req, res, next) {
     const limit = Number(req.query.limit) || 0;
 
@@ -28,14 +20,6 @@ function getLatestsPosts(req, res, next) {
         .catch(next);
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
-
 function createPost(req, res, next) {
     const { _id: userId } = req.user;
     const { text, themeId } = req.body;
@@ -51,13 +35,6 @@ function createPost(req, res, next) {
         .catch(next);
 }
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
 
 function editPost(req, res, next) {
     const { postId } = req.params;
@@ -76,14 +53,6 @@ function editPost(req, res, next) {
         })
         .catch(next);
 }
-
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
 
 function deletePost(req, res, next) {
     const { postId } = req.params;

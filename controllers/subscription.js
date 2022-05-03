@@ -1,13 +1,5 @@
 const { subscriptionModel } = require('../models');
 
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
-
  function subscribe(req, res, next) {
     const { themeId } = req.params;
     const { _id: userId } = req.user;
@@ -18,14 +10,6 @@ const { subscriptionModel } = require('../models');
         .then(x => { res.status(200).json({ message: 'Subscribed successfully!', data: x }) })
         .catch(next);
 }
-
-/**
- * 
- * @param {Request} req 
- * @param {Response} res 
- * @param {Callback} next 
- * @returns {void}
- */
 
 function unsubscribe(req, res, next) {
     const { themeId } = req.params;
