@@ -17,9 +17,7 @@ function register(req, res, next) {
     const { email, username, imageUrl, password, repeatPassword } = req.body;
 
     if (password !== repeatPassword) {
-        res.status(403)
-            .send({ message: 'Passwords do not match!' });
-        return;
+        return Promise.reject({ message: 'Passwords do not match!', status: 403 });
     }
 
     return userModel.create({ email, username, imageUrl, password })
@@ -36,9 +34,7 @@ function register(req, res, next) {
                 field = field.split(" dup key")[0];
                 field = field.substring(0, field.lastIndexOf("_"));
 
-                res.status(409)
-                    .send({ message: `This ${field} is already registered!` });
-                return;
+                return next({ message: `This ${field} is already registered!`, status: 409 });
             }
             next(err);
         });
@@ -55,9 +51,7 @@ function login(req, res, next) {
         .then(([user, match]) => {
 
             if (!match) {
-                res.status(401)
-                    .send({ message: 'Wrong email or password' });
-                return
+                return Promise.reject({ message: 'Wrong email or password', status: 401 });
             }
 
             user = bsonToJson(user);
