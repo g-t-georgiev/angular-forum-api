@@ -10,7 +10,7 @@ const utils = require('../utils');
 
 function authenticate(req, res) {
     const { user } = req;
-    res.status(200).send({ user, message: utils.greet(user && user.username) });
+    res.status(user ? 200 : 401).send({ user, message: utils.greet(user && user.username) });
 }
 
 function getProfileInfo(req, res, next) {
