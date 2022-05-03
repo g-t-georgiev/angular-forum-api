@@ -1,4 +1,4 @@
-const jwt = require('../utils');
+const { jwt } = require('../utils');
 const { authCookieName } = require('../app-config');
 const {
     userModel,
