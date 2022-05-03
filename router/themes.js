@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middlewares');
+const { authMiddleware } = require('../middlewares');
 const { themeController, subscriptionController } = require('../controllers');
 
 // middlewares added specific to this router
