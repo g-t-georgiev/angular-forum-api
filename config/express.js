@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const cookieSecret = process.env.COOKIESECRET || 'SoftUni';
-const { errorHandler } = require('../utils');
+const { errorMiddleware } = require('../middlewares');
 const config = require('./config');
 const apiRouter = require('../router');
 
@@ -22,5 +22,5 @@ module.exports = (app) => {
   
     app.use('/api', apiRouter);
   
-    app.use(errorHandler);
+    app.use(errorMiddleware);
 };
