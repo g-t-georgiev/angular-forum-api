@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const authMiddleware = require('../middlewares');
 const { userController } = require('../controllers');
-const { auth } = require('../utils');
 
-router.get('/auth', auth(false), userController.authenticate);
+// middlewares added specific to this router
 
-router.get('/profile', auth(), userController.getProfileInfo);
-router.put('/profile', auth(), userController.editProfileInfo);
+router.get('/auth', authMiddleware(false), userController.authenticate);
 
-router.get('/themes', auth(), userController.getUserThemes);
-router.get('/posts', auth(), userController.getUserPosts);
-router.get('/subscriptions', auth(), userController.getUserSubscriptions);
-router.get('/likes', auth(), userController.getUserLikes);
+router.get('/profile', authMiddleware(), userController.getProfileInfo);
+router.put('/profile', authMiddleware(), userController.editProfileInfo);
+
+router.get('/themes', authMiddleware(), userController.getUserThemes);
+router.get('/posts', authMiddleware(), userController.getUserPosts);
+router.get('/subscriptions', authMiddleware(), userController.getUserSubscriptions);
+router.get('/likes', authMiddleware(), userController.getUserLikes);
 
 module.exports = router;

@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const { auth } = require('../utils');
+const { authMiddleware } = require('../middlewares');
 const { postController, likeController } = require('../controllers');
 
-// middleware that is specific to this router
+// middlewares added specific to this router
 
 router.get('/', postController.getLatestsPosts);
-router.post('/', auth(), postController.createPost);
-router.put('/:postId', auth(), postController.editPost);
-router.delete('/:postId', auth(), postController.deletePost);
+router.post('/', authMiddleware(), postController.createPost);
+router.put('/:postId', authMiddleware(), postController.editPost);
+router.delete('/:postId', authMiddleware(), postController.deletePost);
 
-router.post('/:postId/like', auth(), likeController.like);
-router.delete('/:postId/like', auth(), likeController.unlike);
+router.post('/:postId/like', authMiddleware(), likeController.like);
+router.delete('/:postId/like', authMiddleware(), likeController.unlike);
 
 module.exports = router
