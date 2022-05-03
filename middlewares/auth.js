@@ -5,8 +5,20 @@ const {
     tokenBlacklistModel
 } = require('../models');
 
-function auth(redirectUnauthenticated = true) {
 
+/**
+ * 
+ * @param {Boolean} redirectUnauthenticated 
+ * @returns {(req: Request, res: Response, next: Function) => void}
+ */
+function authMiddleware(redirectUnauthenticated = true) {
+
+    /**
+     * @param {Request} req
+     * @param {Response} res
+     * @param {Function} next
+     * @returns {void}
+     */
     return function (req, res, next) {
         const token = req.cookies[authCookieName] ?? '';
         Promise.all([
@@ -36,12 +48,8 @@ function auth(redirectUnauthenticated = true) {
                         'blacklisted token', 
                         'jwt must be provided'
                     ].includes(err.message)) {
-                    // console.error(err);
 
-                    res
-                        .status(401)
-                        .send({ message: "Invalid token!" });
-                    return;
+                    return next({ message: "Invalid token!", status: 401 });
                 }
 
                 next(err);
@@ -49,4 +57,4 @@ function auth(redirectUnauthenticated = true) {
     }
 }
 
-module.exports = auth;
+module.exports = authMiddleware;
